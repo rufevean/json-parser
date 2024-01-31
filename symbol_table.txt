@@ -1,4 +1,3 @@
-Token(type="OBJECT_START")
 Token(type="OBJECT_START"),
 Token(type="STRING", value="name"),
 Token(type="COLON"),
