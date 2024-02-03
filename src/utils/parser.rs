@@ -1,48 +1,80 @@
-#[derive(Debug)]
-pub enum Token {
-    ObjectStart,
-    ObjectEnd,
-    String(String),
-    Colon,
-    Comma,
-}
-pub fn parse(tokens: &[Token]) -> Result<(), &'static str> {
-    let mut iter = tokens.iter().peekable();
-
-    while let Some(token) = iter.next() {
+use super::file_to_lexer::Token;
+#[allow(dead_code,unused_variables)]
+pub fn parse(tokens: Vec<Token>) {
+    for token in tokens {
         match token {
-            Token::ObjectStart => {
-                match iter.next() {
-                    Some(Token::String(key)) => {
-                        match iter.next() {
-                            Some(Token::Colon) => {
-                                match iter.next() {
-                                    Some(Token::String(value)) => {
-                                        println!("Key: {}, Value: {}", key, value);
-                                    }
-                                    _ => return Err("Expected a string value after colon."),
-                                }
-                            }
-                            _ => return Err("Expected a colon after key."),
-                        }
-                    }
-                    _ => return Err("Expected a string key."),
-                }
-
-                match iter.peek() {
-                    Some(Token::Comma) => {
-                        iter.next(); 
-                    }
-                    Some(Token::ObjectEnd) => {
-                        iter.next(); 
-                        break; 
-                    }
-                    _ => return Err("Expected a comma or object end after key-value pair."),
-                }
+            Token::String(ref String) => {
+                println!("String");
+                println!("{:?}",token);
+                parse_string(token);
             }
-            _ => return Err("Expected an object start."),
+            Token::LBrace => {
+                parse_lbrace(token);
+            }
+            Token::RBrace => {
+                parse_rbrace(token);
+            }
+            Token::LBracket => {
+                parse_lbracket(token);
+            }
+            Token::RBracket => {
+                parse_rbracket(token);
+            }
+            Token::Assign => {
+                parse_assign(token);
+            }
+            Token::Comma => {
+                parse_comma(token);
+            }
+            Token::NewLine => {
+                parse_newline(token);
+            }
+            Token::EOF => {
+                parse_eof(token);
+            }
+            Token::Boolean(boolean) => {
+                parse_boolean(token);
+            }
+            Token::Number(usize) => {
+                parse_number(token);
+            }
         }
     }
+}
 
-    Ok(())
+#[allow(dead_code)]
+fn parse_string(token: Token) {
+    println!("String");
+}
+
+fn parse_lbrace(token: Token) {
+    println!("LBrace");
+}
+
+fn parse_rbrace(token: Token) {
+    println!("RBrace");
+}
+fn parse_lbracket(token: Token) {
+    println!("LBracket");
+}
+fn parse_rbracket(token: Token) {
+    println!("RBracket");
+}
+fn parse_assign(token: Token) {
+    println!("Assign");
+}
+fn parse_comma(token: Token) {
+    println!("Comma");
+}
+fn parse_newline(token: Token) {
+    println!("NewLine");
+}
+fn parse_eof(token: Token) {
+    println!("EOF");
+}
+fn parse_boolean(token: Token) {
+    println!("Boolean");
+}
+fn parse_number(token: Token) {
+    println!("Number");
 }

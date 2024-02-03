@@ -1,22 +1,25 @@
+use std::any::type_name;
 use std::fs::File;
 use std::io::prelude::*;
 use std::path::Path;
 
 use super::minify;
+use super::parser;
 #[derive(Debug, PartialEq)]
-enum Token {
+pub enum Token {
     LBrace,
     RBrace,
     LBracket,
     RBracket,
     Assign,
     Comma,
-    String,
-    Number,
+    String(String),
+    Number(usize),
     NewLine,
-    Boolean,
+    Boolean(bool),
     EOF,
 }
+
 impl Lexer {
     fn consume(&mut self) {
         self.position += 1;
@@ -53,7 +56,11 @@ impl Lexer {
             }
         }
 
-        Token::Number
+        Token::Number(
+            self.input[self.position - 1..self.position]
+                .parse::<u32>()
+                .unwrap() as usize,
+        )
     }
 
     fn comma(&mut self) -> Token {
@@ -111,8 +118,7 @@ impl Lexer {
             }
             self.consume();
 
-
-            return Token::String;
+            return Token::String(self.input[self.position..].to_string());
         } else {
             return self.end_of_file();
         }
@@ -133,7 +139,7 @@ impl Lexer {
         }
         let input_boolean = &self.input[start..self.position];
         if booleans.contains(&input_boolean) {
-            return Token::Boolean;
+            return Token::Boolean(input_boolean == "true");
         } else {
             return self.end_of_file();
         }
@@ -156,14 +162,21 @@ pub fn create_lexer(input: String) {
         input: input.to_string(),
         position: 0,
     };
-
+    let mut token_vec: Vec<Token> = Vec::new();
+    let mut _value_vec: Vec<String> = Vec::new();
     loop {
         let token = lexer.next_token();
-        println!("{:?}", token);
+
         if token == Token::EOF {
             break;
         }
+        token_vec.push(token);
     }
+    parser::parse(token_vec);
+}
+
+fn type_of<T>(_: &T) -> &'static str {
+    type_name::<T>()
 }
 
 // main
