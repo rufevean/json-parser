@@ -1,0 +1,3 @@
+- error handling
+- recursive parsing for nested structures  
+- string escaping 

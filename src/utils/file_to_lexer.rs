@@ -112,13 +112,14 @@ impl Lexer {
     }
     fn is_string(&mut self) -> Token {
         if self.current_char().unwrap() == b'"' {
+            let start = self.position;
             self.consume();
             while self.current_char().unwrap() != b'"' {
                 self.consume();
             }
             self.consume();
-
-            return Token::String(self.input[self.position..].to_string());
+            let value = self.input[start..self.position].to_string();
+            return Token::String(value);
         } else {
             return self.end_of_file();
         }
@@ -183,6 +184,5 @@ fn type_of<T>(_: &T) -> &'static str {
 pub fn file_to_lexer(input: &Path) {
     let contents = read_contents(input);
     let minified_contents = minify::minify(&contents);
-    println!("Lexer:");
     create_lexer(minified_contents);
 }
